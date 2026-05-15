@@ -40,12 +40,6 @@ A provider is just a function that receives the context built so far and returns
 ```ts
 import { Providers, providerCtx, runWithProvider } from '@photomancerart/ts-provide';
 
-type ConfigCtx = {
-  config: {
-    appName: string;
-  };
-};
-
 function provideConfig() {
   return {
     config: {
@@ -53,6 +47,7 @@ function provideConfig() {
     },
   };
 }
+type ConfigCtx = ReturnType<typeof provideConfig>;
 
 function provideLogger({ config }: ConfigCtx) {
   return {
@@ -61,13 +56,24 @@ function provideLogger({ config }: ConfigCtx) {
     },
   };
 }
+type LogCtx = ReturnType<typeof provideLogger>;
+
+type AppContext = ConfigCtx & LogCtx;
+
+function appContext() {
+  return providerCtx<AppContext>();
+}
+
+function logic(ctx: AppContext = appContext()) {
+  ctx.logger.info('ready');
+}
 
 const appProvider = Providers(provideConfig, provideLogger);
 
 await runWithProvider(
   appProvider,
   () => {
-    providerCtx<{ logger: { info(message: string): void } }>().logger.info('ready');
+    logic();
   },
   undefined,
 );
@@ -84,24 +90,28 @@ import { test } from 'node:test';
 test('uses injected context', async () => {
   const messages: string[] = [];
 
+  function provideTestLogger({ config }: ConfigCtx): LogCtx {
+    return {
+      logger: {
+        info: (message: string) => messages.push(`[${config.appName}] ${message}`),
+      },
+    };
+  }
+
   const testProvider = Providers(
     provideConfig,
-    () => ({
-      logger: {
-        info: (message: string) => messages.push(message),
-      },
-    }),
+    provideTestLogger,
   );
 
   await runWithProvider(
     testProvider,
     () => {
-      providerCtx<{ logger: { info(message: string): void } }>().logger.info('ready');
+      logic();
     },
     undefined,
   );
 
-  assert.deepEqual(messages, ['ready']);
+  assert.deepEqual(messages, ['[hextime] ready']);
 });
 ```
 
