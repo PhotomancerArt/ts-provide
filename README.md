@@ -75,6 +75,38 @@ await runWithProvider(
 
 Each provider is ordinary code. Dependencies are function parameters. Output is a plain object. Composition is explicit.
 
+The same shape works in tests. Build a smaller context, swap the things you need to control, and run the test inside that provider:
+
+```ts
+import assert from 'node:assert/strict';
+import { test } from 'node:test';
+
+test('uses injected context', async () => {
+  const messages: string[] = [];
+
+  const testProvider = Providers(
+    provideConfig,
+    () => ({
+      logger: {
+        info: (message: string) => messages.push(message),
+      },
+    }),
+  );
+
+  await runWithProvider(
+    testProvider,
+    () => {
+      providerCtx<{ logger: { info(message: string): void } }>().logger.info('ready');
+    },
+    undefined,
+  );
+
+  assert.deepEqual(messages, ['ready']);
+});
+```
+
+That is a big part of the draw: the test context is just another provider chain.
+
 ## Why This Shape
 
 The pattern is small, type-safe, and fully authored in code.
