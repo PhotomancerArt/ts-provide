@@ -1,14 +1,19 @@
 # ts-provide
 
-This repo is a reference implementation of a TypeScript provider pattern.
+`ts-provide` is a small library demonstrating a minimalist dependency injection/
+application context pattern in TypeScript.
 
-The point is the pattern more than the package. My suggestion is: point your agents at this repo, copy the ideas that fit, and adapt them to your own app. You can install the package if you want, but the pattern is small enough that owning the code is often the better move.
+If you like the pattern, I suggest you point your agents at
+this repo, copy the ideas that fit, and adapt them to your own app. 
+
+You can install the package if you want, but the pattern is small
+enough that owning the code is often the better move.
 
 ## The Problem
 
-I want to build TypeScript apps with good architecture and very little ceremony.
+I want to build TypeScript apps with good architecture and little ceremony.
 
-I want:
+Requirements:
 
 - Type-safe dependency wiring.
 - Good tests.
@@ -17,9 +22,16 @@ I want:
 - A way to integrate with existing middleware and test frameworks.
 - As little magic as possible.
 
-I do not want decorators, scanning, reflection, codegen, containers, or hidden registration steps.
+I do not want:
 
-This is the simplest thing I have found that works well in modern TypeScript.
+- decorators
+- scanning
+- reflection
+- codegen
+- containers
+- hidden registration steps
+
+This pattern came from building the simplest thing I could that works well in modern TypeScript.
 
 ## The Core Idea
 
