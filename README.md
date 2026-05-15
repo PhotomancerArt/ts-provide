@@ -40,6 +40,7 @@ A provider is just a function that receives the context built so far and returns
 ```ts
 import { Providers, providerCtx, runWithProvider } from '@photomancerart/ts-provide';
 
+// app config
 const provideConfig = () => ({
   config: {
     appName: 'hextime',
@@ -47,6 +48,7 @@ const provideConfig = () => ({
 });
 type ConfigCtx = ReturnType<typeof provideConfig>;
 
+// logger
 const provideLogger = ({ config }: ConfigCtx) => ({
   logger: {
     info: (message: string) => console.log(`[${config.appName}] ${message}`),
@@ -56,21 +58,31 @@ type LogCtx = ReturnType<typeof provideLogger>;
 
 type AppContext = ConfigCtx & LogCtx;
 
+// app context
 const appContext = () => providerCtx<AppContext>();
-
-const logic = (ctx: AppContext = appContext()) => {
-  ctx.logger.info('ready');
-};
 
 const appProvider = Providers(provideConfig, provideLogger);
 
-await runWithProvider(
-  appProvider,
-  () => {
-    logic();
-  },
-  undefined,
-);
+// business logic
+const logic = (ctx: AppContext = appContext()) => {
+  ctx.logger.info('ready');
+
+  // or use ambient access through AsyncLocalStorage
+  appContext().logger.info('ready');
+};
+
+// entrypoint
+async function main() {
+  await runWithProvider(
+    appProvider,
+    () => {
+      logic();
+    },
+    undefined,
+  );
+}
+
+await main();
 ```
 
 Each provider is ordinary code. Dependencies are function parameters. Output is a plain object. Composition is explicit.
