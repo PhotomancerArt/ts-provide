@@ -1,0 +1,53 @@
+{
+  "name": "@photomancerart/ts-provide",
+  "version": "0.1.0",
+  "description": "A reference implementation of a tiny TypeScript provider pattern for minimal dependency injection.",
+  "type": "module",
+  "license": "MIT",
+  "private": false,
+  "author": "Yona Appletree",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/photomancerart/ts-provide.git"
+  },
+  "bugs": {
+    "url": "https://github.com/photomancerart/ts-provide/issues"
+  },
+  "homepage": "https://github.com/photomancerart/ts-provide#readme",
+  "keywords": [
+    "typescript",
+    "dependency-injection-pattern",
+    "providers",
+    "async-local-storage",
+    "hexagonal-architecture"
+  ],
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "sideEffects": false,
+  "packageManager": "pnpm@10.22.0",
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "build:all": "pnpm build && pnpm --filter @photomancerart/hextime-example build",
+    "check": "pnpm typecheck && pnpm test && pnpm build && pnpm --filter @photomancerart/hextime-example typecheck && pnpm --filter @photomancerart/hextime-example test && pnpm --filter @photomancerart/hextime-example build",
+    "example:hextime": "pnpm --filter @photomancerart/hextime-example dev",
+    "test": "tsx --test \"test/**/*.test.ts\"",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3"
+  }
+}
